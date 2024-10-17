@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { z } from 'zod';
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
@@ -13,6 +14,20 @@ export const userRouter = new Hono<{
 }>();
 
 
+//////validation chesa
+
+const signupSchema = z.object({
+  name: z.string().min(1, 'Name is required'), 
+  email: z.string().email('Invalid email address'), 
+  password: z.string().min(8, 'Password must be at least 8 characters long'), 
+});
+
+
+const signinSchema = z.object({
+  // name: z.string().min(1, 'Name is required'), 
+  email: z.string().email('Invalid email address'), 
+  password: z.string().min(8, 'Password must be at least 8 characters long'), 
+});
 
 
 userRouter.post('/signup', async(c) => {
@@ -20,7 +35,8 @@ userRouter.post('/signup', async(c) => {
       datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
   
-  const body = await c.req.json();
+  const body = signupSchema.parse(await c.req.json());
+
   try {
   
   const user = await prisma.user.create({
@@ -48,7 +64,7 @@ userRouter.post('/signup', async(c) => {
       datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
   
-  const body = await c.req.json();
+  const body = signinSchema.parse(await c.req.json());
   
   try {
     const user = await prisma.user.findUnique({

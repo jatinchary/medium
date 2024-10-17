@@ -11,15 +11,8 @@ export const blogRouter = new Hono<{
   Variables:{
     userId:string,
 }
- 
-  
-//   status: (status: number) => void,
-//   json: (data: any) => Promise<any>
+
 }>();
-
-// Initialize Prisma with Accelerate extension
-const prisma = new PrismaClient().$extends(withAccelerate());
-
 
 blogRouter.use('/*', async(c,next)=>{
     const authHeader = c.req.header("authorization") || "";
@@ -40,15 +33,22 @@ blogRouter.use('/*', async(c,next)=>{
 })
 
 blogRouter.post('/', async (c) => {
+  console.log("sdfghj");
   const body = await c.req.json();
-  const userId = c.get("userId");
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
+  const authorId = c.get("userId");
+  // console.log("sdfghj");
+  
+
   
   try {
     const blog = await prisma.post.create({
       data: {
         title: body.title,
         content: body.content,
-        authorId: body.userId // Replace with actual authorId
+        authorId: authorId // Replace with actual authorId
       }
     });
 
@@ -59,20 +59,51 @@ blogRouter.post('/', async (c) => {
   }
 });
 
-blogRouter.put('/:id', async (c) => {
-  const body = await c.req.json();
-  const postId = c.req.param('id');
-  
+blogRouter.put('/', async (c) => {
+
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
+  const authorId = c.get("userId");
+
   try {
-    const blog = await prisma.post.update({
-      where: { id: postId },
+    
+    const userId = c.get('userId');
+    if (!userId) {
+      return c.text('User not authenticated', 401);
+    }
+    const body = await c.req.json();
+    if (!body.id || !body.title || !body.content) {
+      return c.text('Missing required fields', 400); 
+    }
+    const updatedPost = await prisma.post.update({
+      where: {
+        id: body.id,
+        authorId: userId,
+      },
       data: {
         title: body.title,
-        content: body.content
-      }
+        content: body.content,
+      },
     });
 
-    return c.json({ success: true, blog });
+    return c.json({sucess:true ,updatedPost}, 200 ,);
+  } catch (error) {
+    console.error('Error updating post:', error);
+    return c.text('Failed to update post', 500); // Internal server error for any issues
+  }
+});
+
+
+blogRouter.get('/bulk', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+
+  try {
+    const blogs = await prisma.post.findMany();
+
+    return c.json({ success: true, blogs });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return c.json({ success: false, error: errorMessage }, 500);
@@ -80,6 +111,9 @@ blogRouter.put('/:id', async (c) => {
 });
 
 blogRouter.get('/:id', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+}).$extends(withAccelerate())
   const postId = c.req.param('id');
 
   try {
@@ -98,20 +132,7 @@ blogRouter.get('/:id', async (c) => {
   }
 });
 
-blogRouter.get('/bulk', async (c) => {
-//   const { skip = 0, take = 10 } = c.req.query();
 
-  try {
-    const blogs = await prisma.post.findMany({
-    //   skip: parseInt(skip as string),
-    //   take: parseInt(take as string),
-    });
 
-    return c.json({ success: true, blogs });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-    return c.json({ success: false, error: errorMessage }, 500);
-  }
-});
 
 export default blogRouter;
