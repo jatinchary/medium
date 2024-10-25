@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import Blog from './pages/Blog'
 import Signup from './pages/Signup'
-import { Signin } from './pages/Signin'
+import Signin  from './pages/Signin'
 
 
 
