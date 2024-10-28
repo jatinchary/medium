@@ -4,9 +4,17 @@ import axios from "axios";
 // import { BACKEND_URL } from "../ config";
 
 const  BACKEND_URL = "https://backend.charyjatin.workers.dev"
-export const useBlog = () => {
+
+// interface Blog {
+//   id: string;
+//   title: string;
+//   content: string;
+//   // ... add other blog properties you need
+// }
+
+export const useBlog = <T>() => {
     const [loading, setLoading] = useState(true);
-    const [blogs, setBlogs] = useState([]);
+    const [blogs, setBlogs] = useState<T>();
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {

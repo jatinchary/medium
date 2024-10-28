@@ -43,13 +43,13 @@ const Signin = () => {
             </p>
             
             <InputForm
-              label="Email"
+              lable="Email"
               placeholder="jatin@gmail.com"
               onChange={(e) => setPostinputs({ ...postinputs, email: e.target.value })}
             />
             
             <InputForm
-              label="Password"
+              lable="Password"
               placeholder="Password"
               type="password"
               onChange={(e) => setPostinputs({ ...postinputs, password: e.target.value })}
