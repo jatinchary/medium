@@ -3,11 +3,12 @@ import Qout from '../components/Qout';
 import { Link, useNavigate } from 'react-router-dom';
 import InputForm from '../components/InputForm';
 import axios from 'axios';
-import { BACKEND_URL } from '../ config';
+
 
 import AppBar2 from '../components/AppBar2';
 
 const Signin = () => {
+  const  BACKEND_URL = "https://backend.charyjatin.workers.dev"
   const [postinputs, setPostinputs] = useState({
     email: '',
     password: ''

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { BACKEND_URL } from '../ config'; // Adjust the path based on your project structure
+
 import { useNavigate } from 'react-router-dom'; // Adjust the path based on your project structure
 
 const Publish = () => {
+  const  BACKEND_URL = "https://backend.charyjatin.workers.dev"
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');

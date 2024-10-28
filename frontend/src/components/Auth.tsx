@@ -1,12 +1,13 @@
-// import React from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
 import InputForm from './InputForm';
 import { useState } from 'react';
 import axios from 'axios';
-import {BACKEND_URL} from '../ config'
-// import {z} from 'zod';
+
+
 
 const Auth = () => {
+  const  BACKEND_URL = "https://backend.charyjatin.workers.dev"
   const[postinputs , setPostinputs]= useState({
     name:'',
     email:'',
@@ -24,7 +25,7 @@ const Auth = () => {
     } catch (e) {
       console.error("Signup failed:", e);
       alert("Something went wrong");
-      // TODO: Add user-facing error handling
+     
     }
   }
   

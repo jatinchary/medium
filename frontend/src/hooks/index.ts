@@ -1,8 +1,9 @@
 // useBlog.js
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { BACKEND_URL } from "../ config";
+// import { BACKEND_URL } from "../ config";
 
+const  BACKEND_URL = "https://backend.charyjatin.workers.dev"
 export const useBlog = () => {
     const [loading, setLoading] = useState(true);
     const [blogs, setBlogs] = useState([]);
